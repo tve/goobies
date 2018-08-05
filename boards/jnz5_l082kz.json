@@ -1,0 +1,25 @@
+{
+  "build": {
+    "cpu": "cortex-m0plus",
+    "extra_flags": "-DSTM32L082xx",
+    "f_cpu": "32000000L",
+    "mcu": "stm32l082kz",
+    "variant": "FOOBAR"
+  },
+  "debug": {
+    "default_tools": [ "blackmagic" ],
+    "openocd_target": "stm32l0",
+    "svd_path": "STM32L07x.svd"
+  },
+  "frameworks": [ "arduino" ],
+  "name": "JNZ5-L082",
+  "upload": {
+    "maximum_ram_size": 20480,
+    "maximum_size": 196608,
+    "protocol": "blackmagic",
+    "protocols": [ "stlink", "blackmagic" ]
+  },
+  "url":"https://github.com/tve/",
+  "vendor": "TvE"
+}
+
