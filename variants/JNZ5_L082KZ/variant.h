@@ -35,7 +35,7 @@ extern const PinName digitalPin[];
 
 // On-board LED pin number
 #define LED_BUILTIN             PC15
-#define LED_GREEN               LED_BUILTIN
+#define LED                     LED_BUILTIN
 
 // On-board user button
 //#define USER_BTN                PC13 // this board has none...
@@ -52,6 +52,10 @@ extern const PinName digitalPin[];
 // Default pins used for 'Serial' instance (ex: ST-Link). Mandatory for Firmata.
 #define PIN_SERIAL_RX           PA10
 #define PIN_SERIAL_TX           PA9
+
+// I2C default port pins
+#define PIN_WIRE_SDA            PB7
+#define PIN_WIRE_SCL            PB6
 
 #ifdef __cplusplus
 } // extern "C"

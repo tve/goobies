@@ -9,9 +9,24 @@ public:
     STM32ADC(ADC_TypeDef adc) : _adc(adc) {};
 
     // begin initializes the ADC device. It enables the clock, sets default conversion
-    // parameters, and runs a calibration cycle (waiting for it to complete). It leaves the ADC
-    // enabled in auto-off mode (if available).
-    void begin();
+    // parameters, runs a calibration cycle (waiting for it to complete) and sets the mux to the
+    // specified pin. It leaves the ADC enabled in auto-off mode (if available). It returns true if
+    // the pin can be converted by this ADC, the ADC is enabled regardless of the return value.
+    bool begin(uint8_t pin);
+
+    // end shuts down the ADC device and is primarily useful to save power.
+    void end();
+
+    // startConversion triggers the ADC to start converting.
+    void startConversion();
+
+    // read waits for a conversion to complete and returns the result.
+    uint32_t read();
+
+    // ready returns true if a conversion has completed.
+    bool ready();
+
+    // Advanced usage.
 
     // recalibrate performs an ADC calibration cycle and should only be called if Vcc or temperature
     // conditions change significantly since the calibration done as part of begin().
@@ -24,32 +39,26 @@ public:
     // Note that sampleRate is a bit-field specific to the uC and not a true rate in Hz or such.
     void setSampleRate(uint32_t sampleRate);
 
-    // setChannels configures which channels to convert using a channel scan.
-    // For pin numbers, see setPins below ???
-    void setChannels(uint8 *pins, uint8 length);
+    // setPins configures the list of pins to convert. It configures a channel scan if more than one
+    // pin is provided. It returns true if all pins can be convereted by this ADC.
+    bool setPins(uint8_t *pins, uint8_t num);
 
-    // setPins configures the list of pins to convert using a channel scan.
-    void setPins(uint8 *pins, uint8 length);
+    // setChannels configures which channels to convert using a channel scan.
+    void setChannels(uint32_t channelBitmap);
 
     // setTrigger determines how the start of a conversion is triggered. The default is to trigger
-    // explicitly by software, i.e., LL_ADC_REG_TRIG_SOFTWARE. Other options are to trigger by a
-    // timer or an external input, see stm32l0xx_ll_adc.h or equivalent.
+    // explicitly by software, i.e., startConversion() / LL_ADC_REG_TRIG_SOFTWARE. Other options
+    // are to trigger by a timer or an external input, see stm32l0xx_ll_adc.h or equivalent.
     void setTrigger(uint32_t trigger);
 
     // attachInterrupt attaches a callback function to the ADC completion interrupt.
     void attachInterrupt(voidFuncPtr func, uint8 interrupt);
-
-    // startConversion triggers the ADC to start converting.
-    void startConversion();
 
     // startContinuous starts continuous ADC conversions.
     void startContinuous();
 
     // stopContinuous stops continuous ADC conversions.
     void resetContinuous();
-
-    // read returns the DR register.
-    uint32_t read();
 
     // Internal sources.
 
@@ -69,15 +78,16 @@ public:
 
     // setDMA configures DMA with the ADC. It is independent of whether continuous mode or scan mode
     // are used. The callback() function is invoked when the DMA completes.
-    void setDMA(uint16 *buf, uint16 bufLen, uint32 dmaFlags, voidFuncPtr callback);
+    void setDMA(uint16_t *buf, uint16_t bufLen, uint32_t dmaFlags, voidFuncPtr callback);
 
     // setDMA configures DMA with dual ADC. It is independent of whether continuous mode or scan mode
     // are used. It assumes that the uC has two devices.
-    void setDualDMA(uint32 *buf, uint16 bufLen, uint32 dmaFlags);
+    void setDualDMA(uint32_t *buf, uint16_t bufLen, uint32_t dmaFlags);
 
     // setScanMode enables scan mode use with DMA.
     void setScanMode();
 
+    // attachDMAInterrupt attaches a callback function to the completion of a DMA operation.
     void attachDMAInterrupt(voidFuncPtr func);
 
     // Watchdog functions.
