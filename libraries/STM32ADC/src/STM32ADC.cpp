@@ -102,10 +102,10 @@ bool STM32ADC::ready() {
     return !LL_ADC_REG_IsConversionOngoing(_adc);
 }
 
-// readVcc returns the internal measurement of Vcc in millivolts. It polls for the completion of
-// the ADC. It returns 0 if the ADC is not capable of reading Vcc. After calling readVcc
-// setPins() or setChannels() must be called to convert any normal pin.
-uint32_t STM32ADC::readVcc() {
+// measureVcc performs an internal measurement of Vcc in millivolts. It saves and restores the
+// ADC state. Limitation: right now it requires the ADC to be in single conversion mode at the
+// outset.
+uint32_t STM32ADC::measureVcc() {
     // FIXME: we're assuming the ADC is in a "simple" state of single conversion, etc. Should
     // basically save ADC state, re-init the ADC to vrefint, and then restore?
     LL_ADC_SetCommonPathInternalCh(__LL_ADC_COMMON_INSTANCE(), LL_ADC_PATH_INTERNAL_VREFINT);
@@ -126,11 +126,10 @@ uint32_t STM32ADC::readVcc() {
     return v;
 }
 
-// readTemp returns the internal temperature measurement in degrees centigrade. It polls for the
-// completion of the ADC. It returns 0x8000 if the ADC is not capable of reading the temperature
-// sensor. After calling readTemp setPins() or setChannels() must be called to convert any normal
-// pin.
-int16_t STM32ADC::readTemp() {
+// measureTemp performs an internal temperature measurement in degrees centigrade.
+// It saves and restores the ADC state. Limitation: right now it requires the ADC to be in
+// single conversion mode at the outset.
+int16_t STM32ADC::measureTemp() {
     // FIXME: we're assuming the ADC is in a "simple" state of single conversion, etc. Should
     // basically save ADC state, re-init the ADC to vrefint, and then restore?
     if (LL_ADC_REG_IsConversionOngoing(_adc)) {

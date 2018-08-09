@@ -62,16 +62,15 @@ public:
 
     // Internal sources.
 
-    // readVcc returns the internal measurement of Vcc in millivolts. It polls for the completion of
-    // the ADC. It returns 0 if the ADC is not capable of reading Vcc. After calling readVcc
-    // setPins() or setChannels() must be called to convert any normal pin.
-    uint32_t readVcc();
+    // measureVcc performs an internal measurement of Vcc in millivolts. It saves and restores the
+    // ADC state. Limitation: right now it requires the ADC to be in single conversion mode at the
+    // outset.
+    uint32_t measureVcc();
 
-    // readTemp returns the internal temperature measurement in degrees centigrade. It polls for the
-    // completion of the ADC. It returns 0x8000 if the ADC is not capable of reading the temperature
-    // sensor. After calling readTemp setPins() or setChannels() must be called to convert any normal
-    // pin.
-    int16_t readTemp();
+    // measureTemp performs an internal temperature measurement in degrees centigrade.
+    // It saves and restores the ADC state. Limitation: right now it requires the ADC to be in
+    // single conversion mode at the outset.
+    int16_t measureTemp();
 
     // DMA mode functions.
 
