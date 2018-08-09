@@ -1,0 +1,19 @@
+#######################################
+# Syntax Coloring Map RTClock
+#######################################
+
+# Datatypes (KEYWORD1)
+STM32ADC	KEYWORD1
+
+# Functions (KEYWORD2)
+begin
+end
+startConversion
+read
+ready
+readVcc
+readTemp
+recalibrate
+
+# Constants (LITERAL1)
+

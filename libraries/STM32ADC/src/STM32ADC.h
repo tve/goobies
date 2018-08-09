@@ -1,12 +1,10 @@
-#include "utility/util_adc.h"
-
 class STM32ADC {
 
 public:
 
     // STM32ADC creates a device descriptor, it does not initialize anything, use begin() for
     // that purpose. Typical usage is `STM32ADC(ADC1)`.
-    STM32ADC(ADC_TypeDef adc) : _adc(adc) {};
+    STM32ADC(ADC_TypeDef *adc) : _adc(adc) {};
 
     // begin initializes the ADC device. It enables the clock, sets default conversion
     // parameters, runs a calibration cycle (waiting for it to complete) and sets the mux to the
@@ -31,8 +29,9 @@ public:
     // recalibrate performs an ADC calibration cycle and should only be called if Vcc or temperature
     // conditions change significantly since the calibration done as part of begin().
     // It busy-waits until the calibration completes.
-    void recalibrate() {
+    void recalibrate();
 
+#if 0
     // setSampleRate changes the sampling rate, the default is LL_ADC_SAMPLINGTIME_1CYCLE_5.
     // The set of possible sampling rates varies with uC type, see
     // system/Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_ll_adc.h or equivalent.
@@ -59,23 +58,24 @@ public:
 
     // stopContinuous stops continuous ADC conversions.
     void resetContinuous();
+#endif
 
     // Internal sources.
 
-    // enableInternalReading configures the ADC to be able to read the internal Vcc and temperature.
-    // This must be called before readVcc and readTemp.
-    void enableInternalReading();
-
     // readVcc returns the internal measurement of Vcc in millivolts. It polls for the completion of
-    // the ADC. Requires that enableInternalReading() be called beforehand.
-    float readVcc();
+    // the ADC. It returns 0 if the ADC is not capable of reading Vcc. After calling readVcc
+    // setPins() or setChannels() must be called to convert any normal pin.
+    uint32_t readVcc();
 
     // readTemp returns the internal temperature measurement in degrees centigrade. It polls for the
-    // completion of the ADC. Requires that enableInternalReading() be called beforehand.
-    float readTemp();
+    // completion of the ADC. It returns 0x8000 if the ADC is not capable of reading the temperature
+    // sensor. After calling readTemp setPins() or setChannels() must be called to convert any normal
+    // pin.
+    int16_t readTemp();
 
     // DMA mode functions.
 
+#if 0
     // setDMA configures DMA with the ADC. It is independent of whether continuous mode or scan mode
     // are used. The callback() function is invoked when the DMA completes.
     void setDMA(uint16_t *buf, uint16_t bufLen, uint32_t dmaFlags, voidFuncPtr callback);
@@ -103,12 +103,12 @@ public:
     // attachAnalogWatchdogInterrupt attaches a callback function with the analog watchdog
     // interrupt.
     void attachAnalogWatchdogInterrupt(voidFuncPtr func);
-
+#endif
 
 private:
-    uint32 _adc;
-    voidFuncPtr _DMA_int;
-    voidFuncPtr _ADC_int;
-    voidFuncPtr _AWD_int;
+    ADC_TypeDef *_adc;
+    //voidFuncPtr _DMA_int;
+    //voidFuncPtr _ADC_int;
+    //voidFuncPtr _AWD_int;
 
 };
