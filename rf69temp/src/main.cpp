@@ -1,7 +1,7 @@
 // Simple temperature sensor with RF communication to GW.
 
 #include <jee.h>
-#include <jee/i2c-mcp9808.h>
+#include <MCP9808.h>
 #include <jee/spi-rf69.h>
 
 UartDev< PinA<9>, PinA<10> > console;

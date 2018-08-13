@@ -1,17 +1,3 @@
-#include <STM32L0.h>
-
-void setup() {
-    // put your setup code here, to run once:
-  Serial.begin(115200);
-  delay(2000);
-  Serial.println("Serial enabled!");
-}
-
-void loop() {
-    // put your main code here, to run repeatedly:
-}
-
-#if 0
 // Simple temperature sensor with RF communication to GW.
 
 #include <jee.h>
@@ -131,4 +117,3 @@ int main() {
 
 // sample output:
 //
-#endif
