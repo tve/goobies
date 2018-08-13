@@ -2,26 +2,38 @@ class STM32ADC {
 
 public:
 
-    // STM32ADC creates a device descriptor, it does not initialize anything, use begin() for
-    // that purpose. Typical usage is `STM32ADC(ADC1)`.
+    // STM32ADC represents an Analog-to-Digital Converter device, which may have many channels
+    // and therefore can convert from many input pins, but only one at a time. The constructor
+    // does not initialize anything, use begin() for that purpose.
+    //
+    // The STM32ADC does not hold much state about the device and is generally designed such that
+    // concurrent direct access to the device HW registers to tweak some obscure setting is
+    // acceptable as an advanced usage. It is, however, not advisable or useful to create multiple
+    // STM32ADC objects for the same device since they would interfere with one-another.
+    //
+    // Typical usage is `STM32ADC(ADC1)`.
     STM32ADC(ADC_TypeDef *adc) : _adc(adc) {};
 
     // begin initializes the ADC device. It enables the clock, sets default conversion
-    // parameters, runs a calibration cycle (waiting for it to complete) and sets the mux to the
-    // specified pin. It leaves the ADC enabled in auto-off mode (if available). It returns true if
-    // the pin can be converted by this ADC, the ADC is enabled regardless of the return value.
+    // parameters, configures software trigger, runs a calibration cycle (waiting for it to
+    // complete) and sets the mux to the specified pin.
+    // It leaves the ADC enabled in auto-off mode (if available) and returns true if
+    // the pin can be converted by this ADC. The ADC is enabled regardless of the return value.
     bool begin(uint8_t pin);
 
     // end shuts down the ADC device and is primarily useful to save power.
     void end();
 
-    // startConversion triggers the ADC to start converting.
+    // startConversion triggers the ADC to start converting. It is required if there is no hardware
+    // trigger or continuous mode configured.
     void startConversion();
 
-    // read waits for a conversion to complete and returns the result.
+    // read waits for a conversion to complete and returns the result. Unless an external trigger or
+    // continuous mode is configured startConversion() must be called first to initiate a
+    // conversion.
     uint32_t read();
 
-    // ready returns true if a conversion has completed.
+    // ready returns true if a conversion has completed and can be read.
     bool ready();
 
     // Advanced usage.
