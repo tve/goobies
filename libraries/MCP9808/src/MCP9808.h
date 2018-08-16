@@ -2,12 +2,19 @@
 #ifndef _MCP9808_
 #define _MCP9808_
 
+struct MCP9808Regs {
+    virtual uint16_t read (uint8_t r) const = 0; // read 16-bit register r
+    virtual void write (uint8_t r, uint16_t v) const = 0; // write 16-bit register r
+};
+
 #if JEEH
 
 template< typename I2C, int addr =0x18 >
-class MCP9808Regs {
+struct MCP9808Jeeh : MCP9808Regs {
+    MCP9808Jeeh() {};
+
     // read a 16-bit register
-    uint16_t read (uint8_t r) {
+    uint16_t read (uint8_t r) const {
         I2C::start(addr<<1);
         I2C::write(r);
         I2C::stop();
@@ -17,7 +24,7 @@ class MCP9808Regs {
     }
 
     // write a 16-bit register
-    void write (uint8_t r, uint16_t v) {
+    void write (uint8_t r, uint16_t v) const {
         I2C::start(addr<<1);
         I2C::write(r);
         if (r != 8) I2C::write(v>>8);
@@ -28,8 +35,7 @@ class MCP9808Regs {
 
 #elif ARDUINO
 
-class MCP9808Regs {
-    public:
+struct MCP9808Arduino : MCP9808Regs {
     MCP9808Regs(TwoWire &i2c, uint8_t addr = 0x18) : _i2c(i2c), _addr(addr) {};
 
     // read a 16-bit register
@@ -56,10 +62,9 @@ class MCP9808Regs {
 
 #endif
 
-class MCP9808 {
-    public:
+struct MCP9808 {
     MCP9808(MCP9808Regs &regs) : _regs(regs) { };
-    bool init(); // set resolution and shutdown, return true iff device responded
+    bool init(); // set resolution and shutdown, return true if device responded
     uint32_t convert(); // continuous mode, returns ms before first conversion
     int32_t read(); // temp in 1/100th centigrade
     void sleep(); // set sleep mode

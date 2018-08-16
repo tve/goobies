@@ -1,0 +1,14 @@
+{
+    "name": "SX1231",
+    "description": "Semtech SX1231 / HopeRF RF69 FSK packet radio driver",
+    "version": "1.0",
+    "keywords": "experimental",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tve/goobies.git"
+    },
+    "frameworks": [ "arduino", "cmsis", "stm32cube" ],
+    "platforms": [ "atmelavr", "espressif32", "ststm32" ],
+    "libArchive": false
+}
+
